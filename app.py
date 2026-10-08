@@ -39,7 +39,12 @@ def hi_template_render(name):
 
 @app.route('/user/<username>')
 def profile(username):
-    return f'{username} 님의 프로필'
+    return render_template('profile.html', username=username,
+                            posts=['첫 글', '두 번째 글'])
+
+@app.route('/newuser/<username>')
+def new_user(username):
+    return render_template('profile.html', username=username, posts=[])
 
 @app.route('/post/<int:pid>')
 def post(pid):
