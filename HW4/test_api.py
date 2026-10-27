@@ -49,6 +49,23 @@ class TodoApiTest(unittest.TestCase):
         self.assertEqual(self.client.delete(f"/api/todos/{made['id']}").status_code, 204)
         self.assertEqual(self.client.get(f"/api/todos/{made['id']}").status_code, 404)
 
+    def test_note_를_넣으면_그대로_돌아온다(self):
+        r = self.client.post("/api/todos/", json={"text": "우유 사기", "note": "2리터짜리로"})
+        self.assertEqual(r.status_code, 201)
+        self.assertEqual(r.get_json()["note"], "2리터짜리로")
+
+    def test_note_를_안_보내면_빈_글자다(self):
+        r = self.client.post("/api/todos/", json={"text": "책 반납"})
+        self.assertEqual(r.get_json()["note"], "")
+
+    def test_done_으로_골라_받는다(self):
+        self.client.post("/api/todos/", json={"text": "우유 사기", "done": True})
+        self.client.post("/api/todos/", json={"text": "책 반납"})
+        done = self.client.get("/api/todos/?done=true").get_json()
+        not_done = self.client.get("/api/todos/?done=false").get_json()
+        self.assertEqual([t["text"] for t in done], ["우유 사기"])
+        self.assertEqual([t["text"] for t in not_done], ["책 반납"])
+
 
 if __name__ == "__main__":
     unittest.main()
