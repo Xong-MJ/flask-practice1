@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, Blueprint, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_restx import Api, Resource, fields
@@ -5,7 +7,8 @@ from flask_restx import Api, Resource, fields
 app = Flask(__name__)
 
 # 데이터베이스 위치. 파일 하나면 끝입니다
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
+# 테스트는 DATABASE_URL 로 메모리 DB 를 넘겨 instance/todo.db 를 건드리지 않게 합니다
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///todo.db')
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # 404 에 "did you mean ...?" 라는 긴 안내가 따라붙는 것을 끕니다.
 app.config["ERROR_404_HELP"] = False
